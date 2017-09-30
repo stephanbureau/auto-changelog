@@ -1,0 +1,17 @@
+#!/bin/sh
+MESSAGE=$(cat "$1")
+TYPE_RULE="(feat|fix|docs|refactor|style|test|chore)"
+JIRA_NAME_RULE="dnadev\-[0-9]{3,}"
+SHORT_DESC_RULE="(.*)"
+REGEXP="^$TYPE_RULE: $JIRA_NAME_RULE $SHORT_DESC_RULE$"
+VERSION_REGEXP="^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$"
+[[ $MESSAGE =~ $REGEXP ]] && exit 0
+[[ $MESSAGE =~ $VERSION_REGEXP ]] && exit 0
+
+echo -e "\033[33;31mError! Commit message not valid!\033[0m"
+echo -e "Please follow this template:'<\033[0;32mtype\033[0m>: <\033[0;34mjira_name\033[0m> - <\033[0;36mshort_description\033[0m>'."
+echo -e "Or the version speficic one:'v\033[0;36m<semantic_version\033[0m>'."
+echo -e "\033[0;32mtype = $TYPE_RULE\033[0m"
+echo -e "\033[0;34mjira_name = $JIRA_NAME_RULE\033[0m"
+echo -e "\033[0;36mshort_description = $SHORT_DESC_RULE\033[0m"
+exit 1
