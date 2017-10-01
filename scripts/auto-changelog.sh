@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # USAGE:
 # sh auto-changelog.sh [changelog_filename]
 
@@ -6,7 +7,7 @@ CHANGELOG_FILENAME="Changelog.md"
 [[ $1 ]] && CHANGELOG_FILENAME=$1;
 
 # check if repo contains any tag
-! [[ $(git tag --list | egrep -q "^$1$") ]] && {
+! [[ $(git tag -l) ]] && {
     echo -e "\033[33;31mNo tag found in git repository!\033[0m"
     exit 1
 }
@@ -34,6 +35,8 @@ for logType in "${!changelogs[@]}"; do
         logsContent="${logsContent}\n"
     fi
 done
-sed -i "1i$logsContent" $CHANGELOG_FILENAME
+
+touch $CHANGELOG_FILENAME
+echo -e $logsContent | cat - $CHANGELOG_FILENAME > temp && mv temp $CHANGELOG_FILENAME
 echo -e "\033[0;32mChangelog correctly added\033[0m"
 exit $?
